@@ -14,7 +14,7 @@ import javax.swing.SwingConstants;
 import server.Server;
 
 public class App extends JFrame implements ActionListener {
-    JLabel status = new JLabel("Status: Conectado | Porta: 8080");
+    JLabel status = new JLabel("Status: Conectado | Porta: 4242");
     JLabel console = new JLabel("texto");
     JButton btnEnviar = new JButton("Enviar");
 
@@ -51,7 +51,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new App();
         new Server(4242);
+        new App();
     }
 }
