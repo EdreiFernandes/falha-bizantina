@@ -23,6 +23,7 @@ public class App extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane.showMessageDialog(null, "Hello World");
+        // TODO consumir client
     }
 
     public App() {
