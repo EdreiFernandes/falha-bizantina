@@ -7,13 +7,11 @@ import java.net.Socket;
 
 public class Server implements Runnable {
     private int address;
-    private String status = "Conectado";
+    private String status;
     private ServerSocket serverSocket;
 
     public Server(int _address) {
-        address = _address;
-        Thread thread = new Thread(this);
-        thread.start();
+        turnServerOn(_address);
     }
 
     @Override
@@ -28,12 +26,22 @@ public class Server implements Runnable {
                 System.out.println("Server Ligado");
             }
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
             status = "Desconectado";
+
             System.out.println("Erro: " + e.getMessage());
             if (e.getMessage().equals("Address already in use: NET_Bind")) {
-                System.out.println("Porta em uso");
+                // Testar próxima porta
+                turnServerOn(address + 1);
             }
         }
+    }
+
+    private void turnServerOn(int _address) {
+        address = _address;
+        status = "Conectado";
+        Thread thread = new Thread(this);
+        thread.start();
     }
 
     private void treatConnection(Socket _socket) {
