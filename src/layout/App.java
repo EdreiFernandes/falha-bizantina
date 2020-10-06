@@ -9,14 +9,18 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import server.Server;
 
 public class App extends JFrame implements ActionListener {
     private JLabel status = new JLabel();
-    private JLabel console = new JLabel("texto");
+    private JLabel consoleLog = new JLabel("Olá");
     private JButton btnEnviar = new JButton("Enviar");
+    private JPanel console = new JPanel();
+    private JTextField destinatario = new JTextField("4240");
     private Font font = new Font("Arial", Font.BOLD, 20);
 
     @Override
@@ -27,7 +31,22 @@ public class App extends JFrame implements ActionListener {
 
     public App() {
         btnEnviar.addActionListener(this);
+        btnEnviar.setFont(font);
         add(BorderLayout.SOUTH, btnEnviar);
+
+        console.setLayout(new BorderLayout());
+
+        consoleLog.setFont(font);
+        consoleLog.setHorizontalAlignment(SwingConstants.CENTER);
+        destinatario.setFont(font);
+        destinatario.setHorizontalAlignment(SwingConstants.CENTER);
+
+        console.add(BorderLayout.SOUTH, destinatario);
+        console.add(BorderLayout.CENTER, consoleLog);
+        add(BorderLayout.CENTER, console);
+
+        add(BorderLayout.NORTH, status);
+
         instantiateFrame();
     }
 
@@ -39,20 +58,10 @@ public class App extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    private void buildConsoleLog(String _status, int _address) {
-        console.setFont(font);
-        console.setHorizontalAlignment(SwingConstants.CENTER);
-
-        status.setText("Status: " + _status + " | Porta: " + _address);
-
-        add(BorderLayout.NORTH, status);
-        add(BorderLayout.CENTER, console);
-    }
-
     public static void main(String[] args) {
         Server server = new Server(4240);
         App app = new App();
 
-        app.buildConsoleLog(server.getStatus(), server.getAddress());
+        app.status.setText("Status: " + server.getStatus() + " | Porta: " + server.getAddress());
     }
 }
