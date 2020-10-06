@@ -50,7 +50,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        Server server = new Server(4242);
+        Server server = new Server(4240);
         App app = new App();
 
         app.buildConsoleLog(server.getStatus(), server.getAddress());

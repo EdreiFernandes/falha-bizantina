@@ -38,10 +38,14 @@ public class Server implements Runnable {
     }
 
     private void turnServerOn(int _address) {
-        address = _address;
-        status = "Conectado";
-        Thread thread = new Thread(this);
-        thread.start();
+        if (_address >= 4240 && _address < 4245) {
+            address = _address;
+            status = "Conectado";
+            Thread thread = new Thread(this);
+            thread.start();
+        } else {
+            System.out.println("Porta fora das dependências da aplicação");
+        }
     }
 
     private void treatConnection(Socket _socket) {
