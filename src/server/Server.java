@@ -6,29 +6,33 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server implements Runnable {
+    private int address;
+    private String status = "Conectado";
     private ServerSocket serverSocket;
 
-    public Server(int _porta) {
-        try {
-            serverSocket = new ServerSocket(_porta);
-            Thread thread = new Thread(this);
-            thread.start();
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
+    public Server(int _address) {
+        address = _address;
+        Thread thread = new Thread(this);
+        thread.start();
     }
 
     @Override
     public void run() {
         try {
+            serverSocket = new ServerSocket(address);
             System.out.println("Aguardando Conexão");
+
             while (true) {
                 Socket socket = serverSocket.accept();
                 treatConnection(socket);
                 System.out.println("Server Ligado");
             }
         } catch (Exception e) {
+            status = "Desconectado";
             System.out.println("Erro: " + e.getMessage());
+            if (e.getMessage().equals("Address already in use: NET_Bind")) {
+                System.out.println("Porta em uso");
+            }
         }
     }
 
@@ -45,5 +49,13 @@ public class Server implements Runnable {
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
+    }
+
+    public int getAddress() {
+        return address;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

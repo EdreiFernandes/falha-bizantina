@@ -14,11 +14,10 @@ import javax.swing.SwingConstants;
 import server.Server;
 
 public class App extends JFrame implements ActionListener {
-    JLabel status = new JLabel("Status: Conectado | Porta: 4242");
-    JLabel console = new JLabel("texto");
-    JButton btnEnviar = new JButton("Enviar");
-
-    Font font = new Font("Arial", Font.BOLD, 20);
+    private JLabel status = new JLabel();
+    private JLabel console = new JLabel("texto");
+    private JButton btnEnviar = new JButton("Enviar");
+    private Font font = new Font("Arial", Font.BOLD, 20);
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -27,11 +26,8 @@ public class App extends JFrame implements ActionListener {
     }
 
     public App() {
-        buildConsoleLog();
-
         btnEnviar.addActionListener(this);
         add(BorderLayout.SOUTH, btnEnviar);
-
         instantiateFrame();
     }
 
@@ -43,16 +39,20 @@ public class App extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    private void buildConsoleLog() {
+    private void buildConsoleLog(String _status, int _address) {
         console.setFont(font);
         console.setHorizontalAlignment(SwingConstants.CENTER);
+
+        status.setText("Status: " + _status + " | Porta: " + _address);
 
         add(BorderLayout.NORTH, status);
         add(BorderLayout.CENTER, console);
     }
 
     public static void main(String[] args) {
-        new Server(4242);
-        new App();
+        Server server = new Server(4242);
+        App app = new App();
+
+        app.buildConsoleLog(server.getStatus(), server.getAddress());
     }
 }
