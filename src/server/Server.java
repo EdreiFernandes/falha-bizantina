@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class Server implements Runnable {
     private int address;
-    private String status;
+    private Status status;
     private ServerSocket serverSocket;
 
     public Server(int _address) {
@@ -27,8 +27,6 @@ public class Server implements Runnable {
             }
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            status = "Desconectado";
-
             System.out.println("Erro: " + e.getMessage());
             if (e.getMessage().equals("Address already in use: NET_Bind")) {
                 // Testar próxima porta
@@ -38,12 +36,15 @@ public class Server implements Runnable {
     }
 
     private void turnServerOn(int _address) {
+        status = Status.DISCONNECTED;
         if (_address >= 4240 && _address < 4245) {
             address = _address;
-            status = "Conectado";
+            status = Status.CONNECTED;
             Thread thread = new Thread(this);
             thread.start();
         } else {
+            address = 0;
+            status = Status.OUT_OF_DOMAIN;
             System.out.println("Porta fora das dependências da aplicação");
         }
     }
@@ -68,6 +69,6 @@ public class Server implements Runnable {
     }
 
     public String getStatus() {
-        return status;
+        return status.toString();
     }
 }
