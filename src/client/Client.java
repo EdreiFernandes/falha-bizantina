@@ -6,13 +6,14 @@ import java.net.Socket;
 
 public class Client {
 
-    public void SendMessage() throws Exception {
-        Socket socket = new Socket("localhost", 4242);
+    public void SendMessage(int _address) throws Exception {
+        Socket socket = new Socket("localhost", _address);
 
         ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
         // TODO enviar mensagem
+        System.out.println("Enviando para " + _address);
 
         input.close();
         output.close();

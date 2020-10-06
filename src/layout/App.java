@@ -8,11 +8,11 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import client.Client;
 import server.Server;
 
 public class App extends JFrame implements ActionListener {
@@ -24,9 +24,14 @@ public class App extends JFrame implements ActionListener {
     private Font font = new Font("Arial", Font.BOLD, 20);
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "Hello World");
-        // TODO consumir client
+    public void actionPerformed(ActionEvent _event) {
+        try {
+            Client client = new Client();
+            int address = Integer.parseInt(destinatario.getText());
+            client.SendMessage(address);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
     }
 
     public App() {
