@@ -1,67 +1,70 @@
 package rsa;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.security.SecureRandom;
 
 public class RSAKey {
-    public static void main(String[] args) {
+    // Public keys
+    private BigInteger n;
+    private BigInteger e;
+    // Private keys
+    private BigInteger p;
+    private BigInteger q;
+    // Auxiliary key
+    private BigInteger d;
+    private BigInteger tot;
 
-        // Str original
-        // batata frita
-        String str = "batata frita";
-        System.out.println(str);
-        // FIM
+    public RSAKey() {
+        generatePrivateKeys();
+        generatePublicAndAuxKeys();
+    }
 
-        // Str em ASCII
-        // 98 97 116 97 116 97 32 102 114 105 116 97
-        byte[] ascii = str.getBytes(StandardCharsets.US_ASCII);
-        String asciiString = Arrays.toString(ascii);
-        System.out.println(asciiString);
-        // FIM
+    private void generatePrivateKeys() {
+        // generate prime numbers
+        int bitlen = 100;
+        SecureRandom r = new SecureRandom();
+        p = new BigInteger(bitlen / 2, 100, r);
+        q = new BigInteger(bitlen / 2, 100, r);
+    }
 
-        // Str em RSA
-        // 55 79 24 79 24 79 315 34 45 265 24 79
-        // public keys
-        int n = 391;
-        int e = 3;
+    private void generatePublicAndAuxKeys() {
+        // n = p * q
+        n = p.multiply(q);
 
-        StringBuilder rsaString = new StringBuilder();
-        for (byte m : ascii) {
-            // C = M ^ e mod(n)
-            rsaString.append((int) Math.pow(m, e) % n + " ");
+        // φ(n) = (p - 1) * (q - 1)
+        tot = (p.subtract(BigInteger.ONE)).multiply((q.subtract(BigInteger.ONE)));
+
+        // 1 < e < φ(n) e d(e) ∉ d(φ(n))
+        e = new BigInteger("3");
+        while (tot.gcd(e).intValue() > 1) {
+            e = e.add(new BigInteger("2"));
         }
-        System.out.println(rsaString);
-        // FIM
 
-        // voltar str em ASCII
-        // 98 97 116 97 116 97 32 102 114 105 116 97
-        // private keys
-        int p = 17;
-        int q = 23;
-        int d = 235;
+        // multiplicative inverse
+        d = e.modInverse(tot);
+    }
 
-        StringBuilder asciiStringAgain = new StringBuilder();
-        String[] rsaArray = rsaString.toString().split("\\s+");
-        for (String c : rsaArray) {
-            // M = C ^ d mod(n)
+    public BigInteger getN() {
+        return n;
+    }
 
-            BigInteger C = BigInteger.valueOf(Integer.parseInt(c));
-            asciiStringAgain.append(C.pow(d).mod(BigInteger.valueOf(n)) + " ");
-        }
-        System.out.println(asciiStringAgain);
-        // FIM
+    public BigInteger getE() {
+        return e;
+    }
 
-        // voltar str original
-        // batata frita
-        StringBuilder strAgain = new StringBuilder();
-        String[] asciiAgainArray = asciiStringAgain.toString().split("\\s+");
-        for (String m : asciiAgainArray) {
-            strAgain.append((char) Integer.parseInt(m));
-        }
-        System.out.println(strAgain);
-        // FIM
+    public BigInteger getD() {
+        return d;
+    }
 
+    public void ShowKeys() {
+        System.out.println("public keys");
+        System.out.println("n: " + n);
+        System.out.println("e: " + e);
+        System.out.println("private keys");
+        System.out.println("p: " + p);
+        System.out.println("q: " + q);
+        System.out.println("aux keys");
+        System.out.println("d: " + d);
+        System.out.println("tot: " + tot);
     }
 }
