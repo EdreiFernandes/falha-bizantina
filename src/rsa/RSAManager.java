@@ -1,9 +1,10 @@
 package rsa;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-public class RSAKey {
+public class RSAManager {
     // Public keys
     private BigInteger n;
     private BigInteger e;
@@ -14,14 +15,14 @@ public class RSAKey {
     private BigInteger d;
     private BigInteger tot;
 
-    public RSAKey() {
+    public RSAManager() {
         generatePrivateKeys();
         generatePublicAndAuxKeys();
     }
 
     private void generatePrivateKeys() {
         // generate prime numbers
-        int bitlen = 100;
+        int bitlen = 20;
         SecureRandom r = new SecureRandom();
         p = new BigInteger(bitlen / 2, 100, r);
         q = new BigInteger(bitlen / 2, 100, r);
@@ -44,16 +45,36 @@ public class RSAKey {
         d = e.modInverse(tot);
     }
 
-    public BigInteger getN() {
-        return n;
+    public String EncryptMessage(String _message) {
+        byte[] ascii = _message.getBytes(StandardCharsets.US_ASCII);
+
+        StringBuilder rsaMessage = new StringBuilder();
+        for (byte m : ascii) {
+            // C = M ^ e mod(n)
+            String C = BigInteger.valueOf(m).modPow(e, n).toString();
+            rsaMessage.append(C + " ");
+        }
+
+        return rsaMessage.toString();
     }
 
-    public BigInteger getE() {
-        return e;
-    }
+    public String DecryptMessage(String _message) {
+        StringBuilder ascii = new StringBuilder();
+        String[] rsaArray = _message.toString().split("\\s+");
 
-    public BigInteger getD() {
-        return d;
+        for (String c : rsaArray) {
+            BigInteger C = new BigInteger(c);
+            // M = C ^ d mod(n)
+            ascii.append(C.modPow(d, n) + " ");
+        }
+
+        StringBuilder decryptedMessage = new StringBuilder();
+        String[] asciiAgainArray = ascii.toString().split("\\s+");
+        for (String m : asciiAgainArray) {
+            decryptedMessage.append((char) Integer.parseInt(m));
+        }
+
+        return decryptedMessage.toString();
     }
 
     public void ShowKeys() {
