@@ -5,10 +5,8 @@ public class RSACrypto {
         RSAManager rsa = new RSAManager();
 
         String str = "batata frita";
-        var rsaMsg = rsa.EncryptMessage(str);
+        var rsaMsg = rsa.EncryptMessage(str, rsa.GetPublicKey());
         var strAgain = rsa.DecryptMessage(rsaMsg);
-
-        rsa.ShowKeys();
 
         System.out.println("--------------------------");
 
