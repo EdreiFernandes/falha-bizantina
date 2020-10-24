@@ -1,64 +1,62 @@
 package app;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Color;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 public class AppLayout extends JFrame {
-    private JPanel panel;
-    private JTextArea console;
-    private JButton button;
-    private JList list;
-    private JTable table;
+
+    private final int height = 700;
+    private final int width = 600;
+    private final int border = 10;
 
     public AppLayout() {
-        // panel
-        panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.BLACK);
+        JPanel panelNorth = new JPanel(new BorderLayout());
+        borderedPanel(panelNorth, height / 5, width);
+        add(panelNorth, BorderLayout.NORTH);
 
-        // list
-        String[] listItens = { "item 1", "item 2", "item 3", "item 4" };
+        JPanel panelCenter = new JPanel(new BorderLayout());
+        borderedPanel(panelCenter, height / 5, width);
+        add(panelCenter, BorderLayout.CENTER);
 
-        list = new JList<String>(listItens);
-        list.setVisibleRowCount(5);
-        panel.add(new JScrollPane(list), BorderLayout.EAST);
-
-        // table
-        String[] columnsNames = { "User", "Status", "Address" };
-        Object[][] data = { { "Bill", "Conectado", "4240" }, { "Mary", "Conectado", "4241" },
-                { "Rick", "Conectado", "4242" }, { "Janice", "Conectado", "4243" } };
-
-        table = new JTable(data, columnsNames);
-        table.setPreferredScrollableViewportSize(new Dimension(500, 50));
-        table.setFillsViewportHeight(true);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.WEST);
-
-        add(panel, BorderLayout.NORTH);
-        // console
-        console = new JTextArea();
-        add(console, BorderLayout.CENTER);
-
-        // button
-        button = new JButton("Botão");
-        add(button, BorderLayout.SOUTH);
+        JPanel panelSouth = new JPanel(new BorderLayout());
+        borderedPanel(panelSouth, height / 5, width);
+        add(panelSouth, BorderLayout.SOUTH);
 
         instantiateFrame();
     }
 
+    private void borderedPanel(JPanel _panel, int _height, int _width) {
+        _panel.setBackground(Color.GRAY);
+        _panel.setPreferredSize(new Dimension(_width, _height));
+
+        JPanel borderNorth = new JPanel();
+        borderNorth.setBackground(Color.BLACK);
+        borderNorth.setPreferredSize(new Dimension(_width, border));
+        _panel.add(borderNorth, BorderLayout.NORTH);
+
+        JPanel borderWest = new JPanel();
+        borderWest.setBackground(Color.BLACK);
+        borderWest.setPreferredSize(new Dimension(border, _height));
+        _panel.add(borderWest, BorderLayout.WEST);
+
+        JPanel borderSouth = new JPanel();
+        borderSouth.setBackground(Color.BLACK);
+        borderSouth.setPreferredSize(new Dimension(_width, border));
+        _panel.add(borderSouth, BorderLayout.SOUTH);
+
+        JPanel borderEast = new JPanel();
+        borderEast.setBackground(Color.BLACK);
+        borderEast.setPreferredSize(new Dimension(border, _height));
+        _panel.add(borderEast, BorderLayout.EAST);
+    }
+
     private void instantiateFrame() {
         setTitle("Layout");
-        setSize(700, 600);
+        setSize(height, width);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
