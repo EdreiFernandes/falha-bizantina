@@ -1,5 +1,7 @@
 package app;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
@@ -7,12 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 
-public class AppLayout extends JFrame {
+public class AppLayout extends JFrame implements ActionListener {
 
     private final int height = 700;
     private final int width = 600;
@@ -45,6 +48,7 @@ public class AppLayout extends JFrame {
         add(panelSouth, BorderLayout.SOUTH);
 
         button = new JButton("Enter/Leave the bathroom");
+        button.addActionListener(this);
         panelButton.add(button);
 
         instantiateFrame();
@@ -98,15 +102,15 @@ public class AppLayout extends JFrame {
     }
 
     private void instantiateFrame() {
-        setTitle("Layout");
+        setTitle("Fila App");
         setSize(height, width);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new AppLayout();
+    @Override
+    public void actionPerformed(ActionEvent _event) {
+        JOptionPane.showMessageDialog(null, "Hello World");
     }
-
 }
