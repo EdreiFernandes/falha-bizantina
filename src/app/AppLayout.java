@@ -2,13 +2,15 @@ package app;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Color;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 
 public class AppLayout extends JFrame {
 
@@ -18,6 +20,8 @@ public class AppLayout extends JFrame {
 
     private JTable usersTable;
     private JList<String> waitList;
+    private JTextPane console;
+    private JButton button;
 
     public AppLayout() {
         JPanel panelNorth = new JPanel(new BorderLayout());
@@ -28,12 +32,20 @@ public class AppLayout extends JFrame {
         instantiateWaitList(panelInfo);
 
         JPanel panelCenter = new JPanel(new BorderLayout());
-        borderedPanel(panelCenter, height / 5, width);
+        JPanel panelConsole = borderedPanel(panelCenter, height / 5, width);
         add(panelCenter, BorderLayout.CENTER);
 
+        JLabel label = new JLabel("Console");
+        console = new JTextPane();
+        panelConsole.add(label, BorderLayout.NORTH);
+        panelConsole.add(console);
+
         JPanel panelSouth = new JPanel(new BorderLayout());
-        borderedPanel(panelSouth, height / 5, width);
+        JPanel panelButton = borderedPanel(panelSouth, height / 5, width);
         add(panelSouth, BorderLayout.SOUTH);
+
+        button = new JButton("Enter/Leave the bathroom");
+        panelButton.add(button);
 
         instantiateFrame();
     }
@@ -61,26 +73,21 @@ public class AppLayout extends JFrame {
     }
 
     private JPanel borderedPanel(JPanel _panel, int _height, int _width) {
-        _panel.setBackground(Color.GRAY);
         _panel.setPreferredSize(new Dimension(_width, _height));
 
         JPanel borderNorth = new JPanel();
-        borderNorth.setBackground(Color.BLACK);
         borderNorth.setPreferredSize(new Dimension(_width, border));
         _panel.add(borderNorth, BorderLayout.NORTH);
 
         JPanel borderWest = new JPanel();
-        borderWest.setBackground(Color.BLACK);
         borderWest.setPreferredSize(new Dimension(border, _height));
         _panel.add(borderWest, BorderLayout.WEST);
 
         JPanel borderSouth = new JPanel();
-        borderSouth.setBackground(Color.BLACK);
         borderSouth.setPreferredSize(new Dimension(_width, border));
         _panel.add(borderSouth, BorderLayout.SOUTH);
 
         JPanel borderEast = new JPanel();
-        borderEast.setBackground(Color.BLACK);
         borderEast.setPreferredSize(new Dimension(border, _height));
         _panel.add(borderEast, BorderLayout.EAST);
 
