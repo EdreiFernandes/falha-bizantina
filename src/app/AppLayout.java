@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +21,7 @@ public class AppLayout extends JFrame implements ActionListener {
     private final int border = 10;
 
     private JTable usersTable;
-    private JList<String> waitList;
+    private JTable waitList;
     private JTextPane console;
     private JButton button;
 
@@ -57,6 +56,7 @@ public class AppLayout extends JFrame implements ActionListener {
     private void instantiateUsersTable(JPanel _panel) {
         String[] columnsNames = { "User", "Status", "Address" };
 
+        // TODO popular com dados reais (User table)
         Object[][] data = { { "User1", "Conectado", "4240" }, { "User2", "Conectado", "4241" },
                 { "User3", "Conectado", "4242" }, { "User4", "Conectado", "4243" } };
 
@@ -68,11 +68,15 @@ public class AppLayout extends JFrame implements ActionListener {
     }
 
     private void instantiateWaitList(JPanel _panel) {
-        String[] listItens = { "item 1", "item 2", "item 3", "item 4" };
-        waitList = new JList<String>(listItens);
-        waitList.setVisibleRowCount(5);
+        String[] columnsNames = { "Wait list" };
 
-        waitList.setPreferredSize(new Dimension(100, 50));
+        // TODO popular com dados reais (Wait list)
+        Object[][] data = { { "item 1" }, { "item 2" }, { "item 3" }, { "item 4" } };
+
+        waitList = new JTable(data, columnsNames);
+        waitList.setPreferredScrollableViewportSize(new Dimension(100, 50));
+        waitList.setFillsViewportHeight(true);
+
         _panel.add(new JScrollPane(waitList), BorderLayout.EAST);
     }
 
@@ -112,5 +116,6 @@ public class AppLayout extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent _event) {
         JOptionPane.showMessageDialog(null, "Hello World");
+        // TODO ler comandos do butão
     }
 }
