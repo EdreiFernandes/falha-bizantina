@@ -58,7 +58,12 @@ public class AppLayout extends JFrame implements ActionListener {
         String[] columnsNames = { "User", "Status", "Address" };
 
         // TODO popular com dados reais (User table)
-        DefaultTableModel tableData = new DefaultTableModel(columnsNames, 0);
+        DefaultTableModel tableData = new DefaultTableModel(null, columnsNames) {
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
+        };
 
         usersTable = new JTable(tableData);
         usersTable.setPreferredScrollableViewportSize(new Dimension(500, 50));
