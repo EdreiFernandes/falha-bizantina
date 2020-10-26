@@ -4,13 +4,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 public class Server implements Runnable {
+    private String username;
     private int address;
     private Status status;
     private ServerSocket serverSocket;
 
     public Server(int _address) {
+        int id = new Random().nextInt(15);
+        username = "User_" + id;
         turnServerOn(_address);
     }
 
@@ -70,5 +74,9 @@ public class Server implements Runnable {
 
     public String getStatus() {
         return status.toString();
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

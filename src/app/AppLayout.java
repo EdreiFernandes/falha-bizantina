@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.table.DefaultTableModel;
 
 public class AppLayout extends JFrame implements ActionListener {
 
@@ -57,10 +58,9 @@ public class AppLayout extends JFrame implements ActionListener {
         String[] columnsNames = { "User", "Status", "Address" };
 
         // TODO popular com dados reais (User table)
-        Object[][] data = { { "User1", "Conectado", "4240" }, { "User2", "Conectado", "4241" },
-                { "User3", "Conectado", "4242" }, { "User4", "Conectado", "4243" } };
+        DefaultTableModel tableData = new DefaultTableModel(columnsNames, 0);
 
-        usersTable = new JTable(data, columnsNames);
+        usersTable = new JTable(tableData);
         usersTable.setPreferredScrollableViewportSize(new Dimension(500, 50));
         usersTable.setFillsViewportHeight(true);
 
@@ -111,6 +111,11 @@ public class AppLayout extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public void addToUsersTable(Object[] _data) {
+        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
+        model.addRow(_data);
     }
 
     @Override
