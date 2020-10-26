@@ -6,22 +6,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import client.UserConfig;
+
 public class Server implements Runnable {
-    private String username;
-    private int address;
-    private Status status;
     private ServerSocket serverSocket;
 
     public Server(int _address) {
         int id = new Random().nextInt(15);
-        username = "User_" + id;
+        UserConfig.getInstance().setUsername("User_" + id);
         turnServerOn(_address);
     }
 
     @Override
     public void run() {
         try {
-            serverSocket = new ServerSocket(address);
+            serverSocket = new ServerSocket(UserConfig.getInstance().getAddress());
             System.out.println("Aguardando Conexão");
 
             while (true) {
@@ -34,21 +33,21 @@ public class Server implements Runnable {
             System.out.println("Erro: " + e.getMessage());
             if (e.getMessage().equals("Address already in use: NET_Bind")) {
                 // Testar próxima porta
-                turnServerOn(address + 1);
+                turnServerOn(UserConfig.getInstance().getAddress() + 1);
             }
         }
     }
 
     private void turnServerOn(int _address) {
-        status = Status.DISCONNECTED;
+        UserConfig.getInstance().setStatus(Status.DISCONNECTED);
         if (_address >= 4240 && _address < 4245) {
-            address = _address;
-            status = Status.CONNECTED;
+            UserConfig.getInstance().setAddress(_address);
+            UserConfig.getInstance().setStatus(Status.CONNECTED);
             Thread thread = new Thread(this);
             thread.start();
         } else {
-            address = 0;
-            status = Status.OUT_OF_DOMAIN;
+            UserConfig.getInstance().setAddress(0);
+            UserConfig.getInstance().setStatus(Status.OUT_OF_DOMAIN);
             System.out.println("Porta fora das dependências da aplicação");
         }
     }
@@ -66,17 +65,5 @@ public class Server implements Runnable {
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
-    }
-
-    public int getAddress() {
-        return address;
-    }
-
-    public String getStatus() {
-        return status.toString();
-    }
-
-    public String getUsername() {
-        return username;
     }
 }
