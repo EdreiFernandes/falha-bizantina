@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import client.Message;
 import client.UserConfig;
 
 public class Server implements Runnable {
@@ -58,7 +59,15 @@ public class Server implements Runnable {
             ObjectInputStream input = new ObjectInputStream(_socket.getInputStream());
 
             // TODO tratamento
-            System.out.println("Tratado");
+            Message received = (Message) input.readObject();
+            String msg = (String) received.getParameters("msg");
+            System.out.println(msg);
+
+            Message reply = new Message(Operations.ALIVE);
+            reply.setParameters("msg", "Ok, i heard you");
+
+            output.writeObject(reply);
+            output.flush();
 
             input.close();
             output.close();

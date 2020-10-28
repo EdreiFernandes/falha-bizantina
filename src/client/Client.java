@@ -4,6 +4,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import server.Operations;
+
 public class Client {
 
     public void IAmAlive() {
@@ -27,7 +29,15 @@ public class Client {
         ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
         // TODO enviar mensagem
-        System.out.println("Enviando para " + _address);
+        Message sendMessage = new Message(Operations.ALIVE);
+        sendMessage.setParameters("msg", "I am alive");
+
+        output.writeObject(sendMessage);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
 
         input.close();
         output.close();
