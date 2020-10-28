@@ -1,18 +1,27 @@
 package app;
 
+import javax.swing.table.DefaultTableModel;
+
 import client.Client;
 import client.UserConfig;
 import server.Server;
 import server.Status;
 
 public class App {
+    private static AppLayout layout;
+
+    public static void updateUsersTable(Object[] _data) {
+        DefaultTableModel model = (DefaultTableModel) layout.getUsersTable().getModel();
+        model.addRow(_data);
+    }
+
     public static void main(String[] args) {
         new Server(4240);
-        AppLayout layout = new AppLayout();
+        layout = new AppLayout();
 
         Object[] data = { UserConfig.getInstance().getUsername(), UserConfig.getInstance().getStatus(),
                 UserConfig.getInstance().getAddress() };
-        layout.addToUsersTable(data);
+        updateUsersTable(data);
 
         if (UserConfig.getInstance().getStatus() != Status.OUT_OF_DOMAIN) {
             Client client = new Client();

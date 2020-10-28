@@ -118,9 +118,8 @@ public class AppLayout extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void addToUsersTable(Object[] _data) {
-        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
-        model.addRow(_data);
+    public JTable getUsersTable() {
+        return usersTable;
     }
 
     @Override

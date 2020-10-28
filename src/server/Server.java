@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import app.App;
 import client.Message;
 import client.UserConfig;
 
@@ -22,18 +23,17 @@ public class Server implements Runnable {
     public void run() {
         try {
             serverSocket = new ServerSocket(UserConfig.getInstance().getAddress());
-            System.out.println("Aguardando Conexão");
+            System.out.println("Waiting conections");
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 treatConnection(socket);
-                System.out.println("Server Ligado");
             }
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             if (e.getMessage().equals("Address already in use: NET_Bind")) {
-                // Testar próxima porta
+                System.out.println("Let's try to use the next address");
                 turnServerOn(UserConfig.getInstance().getAddress() + 1);
             }
         }
@@ -49,7 +49,7 @@ public class Server implements Runnable {
         } else {
             UserConfig.getInstance().setAddress(0);
             UserConfig.getInstance().setStatus(Status.OUT_OF_DOMAIN);
-            System.out.println("Porta fora das dependências da aplicação");
+            System.out.println("Address outside the application domain");
         }
     }
 
@@ -61,10 +61,20 @@ public class Server implements Runnable {
             // TODO tratamento
             Message received = (Message) input.readObject();
             String msg = (String) received.getParameters("msg");
-            System.out.println(msg);
+            int address = (int) received.getParameters("address");
+            String username = (String) received.getParameters("username");
+            Status status = (Status) received.getParameters("status");
+
+            Object[] data = { username, status, address };
+            App.updateUsersTable(data);
+            System.out.println(address + " says: " + msg);
 
             Message reply = new Message(Operations.ALIVE);
+            reply.setStatus(Status.OK);
             reply.setParameters("msg", "Ok, i heard you");
+            reply.setParameters("address", UserConfig.getInstance().getAddress());
+            reply.setParameters("username", UserConfig.getInstance().getUsername());
+            reply.setParameters("status", UserConfig.getInstance().getStatus());
 
             output.writeObject(reply);
             output.flush();
@@ -72,7 +82,7 @@ public class Server implements Runnable {
             input.close();
             output.close();
         } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
