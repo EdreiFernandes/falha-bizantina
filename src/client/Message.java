@@ -1,12 +1,13 @@
 package client;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import server.Operations;
 import server.Status;
 
-public class Message {
+public class Message implements Serializable {
     private Operations operation;
     private Status status;
     private Map<String, Object> parameters;
