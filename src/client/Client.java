@@ -10,14 +10,36 @@ import server.Operations;
 import server.Status;
 
 public class Client {
+    private Socket socket;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
 
-    public void SendMessage() {
+    public void SendMessage(String _operationString) {
         int address = AddressConfig.getInstance().getFirstAddress();
 
         while (AddressConfig.isInDomainRange(address)) {
             try {
                 if (UserConfig.getInstance().getAddress() != address) {
-                    IAmAlive(address);
+                    socket = new Socket("localhost", address);
+                    output = new ObjectOutputStream(socket.getOutputStream());
+                    input = new ObjectInputStream(socket.getInputStream());
+
+                    Operations operation = Operations.valueOf(_operationString);
+                    Message sendMessage = new Message(operation);
+
+                    switch (operation) {
+                        case ALIVE:
+                            IAmAlive(sendMessage);
+                            break;
+
+                        default:
+                            System.out.println(_operationString + " doesn't exist in the current context!");
+                            break;
+                    }
+
+                    input.close();
+                    output.close();
+                    socket.close();
                 }
             } catch (Exception e) {
                 System.out.println("Error " + address);
@@ -26,24 +48,18 @@ public class Client {
         }
     }
 
-    public void IAmAlive(int _address) throws Exception {
-        Socket socket = new Socket("localhost", _address);
+    private void IAmAlive(Message _sendMessage) throws Exception {
+        _sendMessage.setParameters("msg", "I am alive");
+        _sendMessage.setParameters("address", UserConfig.getInstance().getAddress());
+        _sendMessage.setParameters("username", UserConfig.getInstance().getUsername());
+        _sendMessage.setParameters("status", UserConfig.getInstance().getStatus());
 
-        ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-
-        // TODO enviar mensagem
-        Message sendMessage = new Message(Operations.ALIVE);
-        sendMessage.setParameters("msg", "I am alive");
-        sendMessage.setParameters("address", UserConfig.getInstance().getAddress());
-        sendMessage.setParameters("username", UserConfig.getInstance().getUsername());
-        sendMessage.setParameters("status", UserConfig.getInstance().getStatus());
-
-        output.writeObject(sendMessage);
+        output.writeObject(_sendMessage);
         output.flush();
 
         Message reply = (Message) input.readObject();
         String msg = (String) reply.getParameters("msg");
+
         if (reply.getStatus() == Status.OK) {
             int address = (int) reply.getParameters("address");
             String username = (String) reply.getParameters("username");
@@ -51,12 +67,9 @@ public class Client {
 
             Object[] data = { username, status, address };
             App.updateUsersTable(data);
+            System.out.println("Op: " + reply.getOperation() + " - " + address + " says: " + msg);
+        } else {
+            System.out.println("Op: " + reply.getOperation() + " says: " + msg);
         }
-        System.out.println("Op: " + reply.getOperation() + " - " + _address + " says: " + msg);
-
-        input.close();
-        output.close();
-        socket.close();
     }
-
 }
