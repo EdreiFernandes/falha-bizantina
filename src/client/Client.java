@@ -5,14 +5,16 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import app.App;
+import server.AddressConfig;
 import server.Operations;
 import server.Status;
 
 public class Client {
 
     public void SendMessage() {
-        int address = 4240;
-        while (UserConfig.isInDomainRange(address)) {
+        int address = AddressConfig.getInstance().getFirstAddress();
+
+        while (AddressConfig.isInDomainRange(address)) {
             try {
                 if (UserConfig.getInstance().getAddress() != address) {
                     IAmAlive(address);

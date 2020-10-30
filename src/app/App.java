@@ -4,6 +4,7 @@ import javax.swing.table.DefaultTableModel;
 
 import client.Client;
 import client.UserConfig;
+import server.AddressConfig;
 import server.Server;
 import server.Status;
 
@@ -16,7 +17,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        new Server(4240);
+        new Server(AddressConfig.getInstance().getFirstAddress());
         layout = new AppLayout();
 
         Object[] data = { UserConfig.getInstance().getUsername(), UserConfig.getInstance().getStatus(),

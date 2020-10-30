@@ -19,10 +19,6 @@ public class UserConfig {
         return instance;
     }
 
-    public static boolean isInDomainRange(int _address) {
-        return _address >= 4240 && _address < 4245;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }

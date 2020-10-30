@@ -41,7 +41,7 @@ public class Server implements Runnable {
 
     private void turnServerOn(int _address) {
         UserConfig.getInstance().setStatus(Status.DISCONNECTED);
-        if (UserConfig.isInDomainRange(_address)) {
+        if (AddressConfig.isInDomainRange(_address)) {
             UserConfig.getInstance().setAddress(_address);
             UserConfig.getInstance().setStatus(Status.CONNECTED);
             Thread thread = new Thread(this);
