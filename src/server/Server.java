@@ -60,21 +60,37 @@ public class Server implements Runnable {
 
             // TODO tratamento
             Message received = (Message) input.readObject();
-            String msg = (String) received.getParameters("msg");
-            int address = (int) received.getParameters("address");
-            String username = (String) received.getParameters("username");
-            Status status = (Status) received.getParameters("status");
+            Operations operation = received.getOperation();
+            Message reply = new Message(operation);
 
-            Object[] data = { username, status, address };
-            App.updateUsersTable(data);
-            System.out.println(address + " says: " + msg);
+            switch (operation) {
+                case ALIVE:
+                    try {
+                        String msg = (String) received.getParameters("msg");
+                        int address = (int) received.getParameters("address");
+                        String username = (String) received.getParameters("username");
+                        Status status = (Status) received.getParameters("status");
 
-            Message reply = new Message(Operations.ALIVE);
-            reply.setStatus(Status.OK);
-            reply.setParameters("msg", "Ok, i heard you");
-            reply.setParameters("address", UserConfig.getInstance().getAddress());
-            reply.setParameters("username", UserConfig.getInstance().getUsername());
-            reply.setParameters("status", UserConfig.getInstance().getStatus());
+                        Object[] data = { username, status, address };
+                        App.updateUsersTable(data);
+                        System.out.println(address + " says: " + msg);
+
+                        reply.setStatus(Status.OK);
+                        reply.setParameters("msg", "Ok, i heard you");
+                        reply.setParameters("address", UserConfig.getInstance().getAddress());
+                        reply.setParameters("username", UserConfig.getInstance().getUsername());
+                        reply.setParameters("status", UserConfig.getInstance().getStatus());
+                    } catch (Exception e) {
+                        reply.setStatus(Status.ERROR);
+                        reply.setParameters("msg", e.getMessage());
+                    }
+                    break;
+
+                default:
+                    reply.setStatus(Status.ERROR);
+                    reply.setParameters("msg", "I couldn't find this operation, Sorry");
+                    break;
+            }
 
             output.writeObject(reply);
             output.flush();

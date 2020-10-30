@@ -41,16 +41,16 @@ public class Client {
         output.flush();
 
         Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
         if (reply.getStatus() == Status.OK) {
-            String msg = (String) reply.getParameters("msg");
             int address = (int) reply.getParameters("address");
             String username = (String) reply.getParameters("username");
             Status status = (Status) reply.getParameters("status");
 
             Object[] data = { username, status, address };
             App.updateUsersTable(data);
-            System.out.println(_address + " says: " + msg);
         }
+        System.out.println(_address + " says: " + msg);
 
         input.close();
         output.close();
