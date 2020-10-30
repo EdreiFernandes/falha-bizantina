@@ -12,6 +12,8 @@ import client.UserConfig;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
 
     public Server(int _address) {
         int id = new Random().nextInt(15);
@@ -55,10 +57,9 @@ public class Server implements Runnable {
 
     private void treatConnection(Socket _socket) {
         try {
-            ObjectOutputStream output = new ObjectOutputStream(_socket.getOutputStream());
-            ObjectInputStream input = new ObjectInputStream(_socket.getInputStream());
+            output = new ObjectOutputStream(_socket.getOutputStream());
+            input = new ObjectInputStream(_socket.getInputStream());
 
-            // TODO tratamento
             Message received = (Message) input.readObject();
             Operations operation = received.getOperation();
             Operations replyOperation = Operations.valueOf(operation.toString() + "_REPLY");
@@ -66,25 +67,7 @@ public class Server implements Runnable {
 
             switch (operation) {
                 case ALIVE:
-                    try {
-                        String msg = (String) received.getParameters("msg");
-                        int address = (int) received.getParameters("address");
-                        String username = (String) received.getParameters("username");
-                        Status status = (Status) received.getParameters("status");
-
-                        Object[] data = { username, status, address };
-                        App.updateUsersTable(data);
-                        System.out.println(address + " says: " + msg);
-
-                        reply.setStatus(Status.OK);
-                        reply.setParameters("msg", "Ok, i heard you");
-                        reply.setParameters("address", UserConfig.getInstance().getAddress());
-                        reply.setParameters("username", UserConfig.getInstance().getUsername());
-                        reply.setParameters("status", UserConfig.getInstance().getStatus());
-                    } catch (Exception e) {
-                        reply.setStatus(Status.ERROR);
-                        reply.setParameters("msg", e.getMessage());
-                    }
+                    someoneAlive(received, reply);
                     break;
 
                 default:
@@ -100,6 +83,28 @@ public class Server implements Runnable {
             output.close();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void someoneAlive(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            int address = (int) _received.getParameters("address");
+            String username = (String) _received.getParameters("username");
+            Status status = (Status) _received.getParameters("status");
+
+            Object[] data = { username, status, address };
+            App.updateUsersTable(data);
+            System.out.println(address + " says: " + msg);
+
+            _reply.setStatus(Status.OK);
+            _reply.setParameters("msg", "Ok, i heard you");
+            _reply.setParameters("address", UserConfig.getInstance().getAddress());
+            _reply.setParameters("username", UserConfig.getInstance().getUsername());
+            _reply.setParameters("status", UserConfig.getInstance().getStatus());
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
         }
     }
 }

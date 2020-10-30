@@ -57,7 +57,6 @@ public class AppLayout extends JFrame implements ActionListener {
     private void instantiateUsersTable(JPanel _panel) {
         String[] columnsNames = { "User", "Status", "Address" };
 
-        // TODO popular com dados reais (User table)
         DefaultTableModel tableData = new DefaultTableModel(null, columnsNames) {
             @Override
             public boolean isCellEditable(int row, int col) {
