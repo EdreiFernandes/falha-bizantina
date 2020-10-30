@@ -61,7 +61,8 @@ public class Server implements Runnable {
             // TODO tratamento
             Message received = (Message) input.readObject();
             Operations operation = received.getOperation();
-            Message reply = new Message(operation);
+            Operations replyOperation = Operations.valueOf(operation.toString() + "_REPLY");
+            Message reply = new Message(replyOperation);
 
             switch (operation) {
                 case ALIVE:

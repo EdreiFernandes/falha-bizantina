@@ -50,7 +50,7 @@ public class Client {
             Object[] data = { username, status, address };
             App.updateUsersTable(data);
         }
-        System.out.println(_address + " says: " + msg);
+        System.out.println("Op: " + reply.getOperation() + " - " + _address + " says: " + msg);
 
         input.close();
         output.close();
