@@ -25,7 +25,7 @@ public class App {
 
         if (UserConfig.getInstance().getStatus() != Status.OUT_OF_DOMAIN) {
             Client client = new Client();
-            client.IAmAlive();
+            client.SendMessage();
         }
     }
 }
