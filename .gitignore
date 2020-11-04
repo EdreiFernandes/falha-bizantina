@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Manifest
+manifest.txt
+
 # Log file
 *.log
 
