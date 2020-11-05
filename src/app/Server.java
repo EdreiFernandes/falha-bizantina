@@ -1,4 +1,4 @@
-package server;
+package app;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -6,8 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
-import app.App;
-import client.Message;
 import helper.AddressConfig;
 import helper.Operations;
 import helper.Status;

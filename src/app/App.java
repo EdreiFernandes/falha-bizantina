@@ -2,11 +2,9 @@ package app;
 
 import javax.swing.table.DefaultTableModel;
 
-import client.Client;
 import helper.AddressConfig;
 import helper.Status;
 import helper.UserConfig;
-import server.Server;
 
 public class App {
     private static AppLayout layout;

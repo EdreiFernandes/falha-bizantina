@@ -1,10 +1,9 @@
-package client;
+package app;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import app.App;
 import helper.AddressConfig;
 import helper.Operations;
 import helper.Status;
