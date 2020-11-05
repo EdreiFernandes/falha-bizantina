@@ -10,12 +10,18 @@ Projeto de Sistemas distribuídos com o objetivo de utilizar sockets para efetua
 - Class-Path: .
 - Main-Class: app.App
 
-### Comandos
+### Compiling
 
-- javac -d ./bin src/app/\*.java
+- javac -d ./bin src/helper/\*.java
 
-- javac -cp ./bin src/app/\*.java (caso tenha dependências)
+- javac -d ./bin src/rsa/\*.java
 
-- jar -cvmf manifest.txt App.jar app/\*.class
+- javac -cp ./bin src/app/\*.java
 
-- java -jar App.jar
+- move .class from 'src/app' to 'bin/app'
+
+- create manifest.txt in bin folder
+
+- jar -cvmf bin/manifest.txt bin/App.jar bin/app/\*.class
+
+- java -jar bin/App.jar
