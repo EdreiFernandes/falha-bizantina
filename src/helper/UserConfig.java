@@ -1,6 +1,4 @@
-package client;
-
-import server.Status;
+package helper;
 
 public class UserConfig {
     private String username;

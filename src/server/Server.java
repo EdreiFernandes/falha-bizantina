@@ -8,7 +8,10 @@ import java.util.Random;
 
 import app.App;
 import client.Message;
-import client.UserConfig;
+import helper.AddressConfig;
+import helper.Operations;
+import helper.Status;
+import helper.UserConfig;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;

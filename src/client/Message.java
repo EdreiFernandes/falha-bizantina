@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.Operations;
-import server.Status;
+import helper.Operations;
+import helper.Status;
 
 public class Message implements Serializable {
     private Operations operation;

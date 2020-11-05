@@ -1,4 +1,4 @@
-package server;
+package helper;
 
 public class AddressConfig {
     private int firstAddress = 4240;

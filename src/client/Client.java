@@ -5,9 +5,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import app.App;
-import server.AddressConfig;
-import server.Operations;
-import server.Status;
+import helper.AddressConfig;
+import helper.Operations;
+import helper.Status;
+import helper.UserConfig;
 
 public class Client {
     private Socket socket;
