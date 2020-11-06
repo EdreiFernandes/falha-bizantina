@@ -8,6 +8,7 @@ import helper.AddressConfig;
 import helper.Operations;
 import helper.Status;
 import helper.UserConfig;
+import rsa.PublicKey;
 
 public class Client {
     private Socket socket;
@@ -30,6 +31,10 @@ public class Client {
                     switch (operation) {
                         case ALIVE:
                             IAmAlive(sendMessage);
+                            break;
+
+                        case ENTRY:
+                            IWouldLikeToUseWC(sendMessage);
                             break;
 
                         default:
@@ -70,6 +75,37 @@ public class Client {
             System.out.println("Op: " + reply.getOperation() + " - " + address + " says: " + msg);
         } else {
             System.out.println("Op: " + reply.getOperation() + " says: " + msg);
+        }
+    }
+
+    private void IWouldLikeToUseWC(Message _sendMessage) throws Exception {
+        Message askKeys = new Message(Operations.PUBKEY);
+        askKeys.setParameters("msg", "Can i have your keys?");
+
+        output.writeObject(askKeys);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
+
+        if (reply.getStatus() == Status.OK) {
+            PublicKey publicKey = (PublicKey) reply.getParameters("pubkeys");
+
+            msg = App.getRsa().EncryptMessage("I would like to use the toilet, ok?", publicKey);
+            _sendMessage.setParameters("msg", msg);
+
+            output.writeObject(_sendMessage);
+            output.flush();
+
+            reply = (Message) input.readObject();
+            msg = (String) reply.getParameters("msg");
+            System.out.println(msg);
+
+            if (reply.getStatus() == Status.OK) {
+                msg = (String) reply.getParameters("res");
+                System.out.println(msg);
+            }
         }
     }
 }

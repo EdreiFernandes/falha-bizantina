@@ -5,9 +5,20 @@ import javax.swing.table.DefaultTableModel;
 import helper.AddressConfig;
 import helper.Status;
 import helper.UserConfig;
+import rsa.RSAManager;
 
 public class App {
     private static AppLayout layout;
+    private static Client client;
+    private static RSAManager rsa;
+
+    public static RSAManager getRsa() {
+        return rsa;
+    }
+
+    public static Client getClient() {
+        return client;
+    }
 
     public static void updateUsersTable(Object[] _data) {
         DefaultTableModel model = (DefaultTableModel) layout.getUsersTable().getModel();
@@ -23,7 +34,9 @@ public class App {
         updateUsersTable(data);
 
         if (UserConfig.getInstance().getStatus() != Status.OUT_OF_DOMAIN) {
-            Client client = new Client();
+            rsa = new RSAManager();
+            client = new Client();
+
             client.SendMessage("ALIVE");
         }
     }

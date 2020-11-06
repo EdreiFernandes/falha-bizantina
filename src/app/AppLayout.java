@@ -123,7 +123,8 @@ public class AppLayout extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent _event) {
-        JOptionPane.showMessageDialog(null, "Hello World");
+        JOptionPane.showMessageDialog(null, "Sending Message");
+        App.getClient().SendMessage("ENTRY");
         // TODO ler comandos do butão
     }
 }
