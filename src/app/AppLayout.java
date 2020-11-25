@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -124,6 +123,5 @@ public class AppLayout extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent _event) {
         App.getClient().SendMessage("ENTRY");
-        // TODO ler comandos do butão
     }
 }

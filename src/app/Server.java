@@ -149,6 +149,7 @@ public class Server implements Runnable {
 
             _reply.setStatus(Status.OK);
             _reply.setParameters("msg", "Wait a minute");
+            // TODO logica falha bizantina
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());

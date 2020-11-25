@@ -103,6 +103,7 @@ public class Client {
             msg = (String) reply.getParameters("msg");
             System.out.println(msg);
 
+            // TODO logica falha bizantina
             // if (reply.getStatus() == Status.OK) {
             // msg = (String) reply.getParameters("res");
             // System.out.println(msg);
