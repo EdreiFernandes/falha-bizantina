@@ -10,6 +10,7 @@ import helper.AddressConfig;
 import helper.Operations;
 import helper.Status;
 import helper.UserConfig;
+import rsa.PublicKey;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
@@ -58,27 +59,43 @@ public class Server implements Runnable {
 
     private void treatConnection(Socket _socket) {
         try {
+            boolean talking = true;
             output = new ObjectOutputStream(_socket.getOutputStream());
             input = new ObjectInputStream(_socket.getInputStream());
 
-            Message received = (Message) input.readObject();
-            Operations operation = received.getOperation();
-            Operations replyOperation = Operations.valueOf(operation.toString() + "_REPLY");
-            Message reply = new Message(replyOperation);
+            while (talking) {
+                Message received = (Message) input.readObject();
+                Operations operation = received.getOperation();
+                Operations replyOperation = Operations.valueOf(operation.toString() + "_REPLY");
+                Message reply = new Message(replyOperation);
 
-            switch (operation) {
-                case ALIVE:
-                    someoneAlive(received, reply);
-                    break;
+                switch (operation) {
+                    case ALIVE:
+                        someoneAlive(received, reply);
+                        break;
 
-                default:
-                    reply.setStatus(Status.ERROR);
-                    reply.setParameters("msg", "I couldn't find this operation, Sorry");
-                    break;
+                    case PUBKEY:
+                        askingForKeys(received, reply);
+                        break;
+
+                    case ENTRY:
+                        askingForWC(received, reply);
+                        break;
+
+                    case ENDCON:
+                        endConnection(received, reply);
+                        talking = false;
+                        break;
+
+                    default:
+                        reply.setStatus(Status.ERROR);
+                        reply.setParameters("msg", "I couldn't find this operation, Sorry");
+                        break;
+                }
+
+                output.writeObject(reply);
+                output.flush();
             }
-
-            output.writeObject(reply);
-            output.flush();
 
             input.close();
             output.close();
@@ -103,6 +120,48 @@ public class Server implements Runnable {
             _reply.setParameters("address", UserConfig.getInstance().getAddress());
             _reply.setParameters("username", UserConfig.getInstance().getUsername());
             _reply.setParameters("status", UserConfig.getInstance().getStatus());
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void askingForKeys(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            System.out.println(msg);
+
+            _reply.setStatus(Status.OK);
+            _reply.setParameters("msg", "Sure, take my keys!");
+            PublicKey publicKey = App.getRsa().GetPublicKey();
+            _reply.setParameters("pubkeys", publicKey);
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void askingForWC(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            msg = App.getRsa().DecryptMessage(msg);
+            System.out.println(msg);
+
+            _reply.setStatus(Status.OK);
+            _reply.setParameters("msg", "Wait a minute");
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void endConnection(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            System.out.println(msg);
+
+            _reply.setStatus(Status.OK);
+            _reply.setParameters("msg", "See you");
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());

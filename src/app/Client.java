@@ -42,6 +42,7 @@ public class Client {
                             break;
                     }
 
+                    endConnection();
                     input.close();
                     output.close();
                     socket.close();
@@ -102,10 +103,22 @@ public class Client {
             msg = (String) reply.getParameters("msg");
             System.out.println(msg);
 
-            if (reply.getStatus() == Status.OK) {
-                msg = (String) reply.getParameters("res");
-                System.out.println(msg);
-            }
+            // if (reply.getStatus() == Status.OK) {
+            // msg = (String) reply.getParameters("res");
+            // System.out.println(msg);
+            // }
         }
+    }
+
+    private void endConnection() throws Exception {
+        Message endConnection = new Message(Operations.ENDCON);
+        endConnection.setParameters("msg", "Thanks, that's all");
+
+        output.writeObject(endConnection);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
     }
 }
