@@ -3,6 +3,8 @@ package app;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import helper.AddressConfig;
 import helper.Operations;
@@ -14,9 +16,17 @@ public class Client {
     private Socket socket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    private Boolean isWCBusy;
+    private List<Boolean> votingList;
+
+    public Client() {
+        isWCBusy = false;
+        votingList = new ArrayList<Boolean>();
+    }
 
     public void SendMessage(String _operationString) {
         int address = AddressConfig.getInstance().getFirstAddress();
+        Operations operation = Operations.valueOf(_operationString);
 
         while (AddressConfig.isInDomainRange(address)) {
             try {
@@ -25,7 +35,6 @@ public class Client {
                     output = new ObjectOutputStream(socket.getOutputStream());
                     input = new ObjectInputStream(socket.getInputStream());
 
-                    Operations operation = Operations.valueOf(_operationString);
                     Message sendMessage = new Message(operation);
 
                     switch (operation) {
@@ -34,7 +43,15 @@ public class Client {
                             break;
 
                         case ENTRY:
-                            IWouldLikeToUseWC(sendMessage);
+                            if (!isWCBusy) {
+                                IWouldLikeToUseWC(sendMessage);
+                            } else {
+                                System.out.println("The WC is busy. Wait a minute");
+                            }
+                            break;
+
+                        case CONFIRM:
+                            ConfirmingUse(sendMessage);
                             break;
 
                         default:
@@ -51,6 +68,10 @@ public class Client {
                 System.out.println("Error " + address);
             }
             address++;
+        }
+
+        if (operation.equals(Operations.ENTRY)) {
+            countingVotes();
         }
     }
 
@@ -95,19 +116,20 @@ public class Client {
 
             msg = App.getRsa().EncryptMessage("I would like to use the toilet, ok?", publicKey);
             _sendMessage.setParameters("msg", msg);
+            _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
             output.writeObject(_sendMessage);
             output.flush();
 
             reply = (Message) input.readObject();
             msg = (String) reply.getParameters("msg");
-            System.out.println(msg);
+            System.out.println(App.getRsa().DecryptMessage(msg));
 
-            // TODO logica falha bizantina
-            // if (reply.getStatus() == Status.OK) {
-            // msg = (String) reply.getParameters("res");
-            // System.out.println(msg);
-            // }
+            if (reply.getStatus() == Status.OK) {
+                votingList.add(false);
+            } else if (reply.getStatus() == Status.WAIT) {
+                votingList.add(true);
+            }
         }
     }
 
@@ -121,5 +143,43 @@ public class Client {
         Message reply = (Message) input.readObject();
         String msg = (String) reply.getParameters("msg");
         System.out.println(msg);
+    }
+
+    private void countingVotes() {
+        int canNotUse = 0;
+        int canUse = 0;
+        for (Boolean vote : votingList) {
+            if (vote) {
+                canNotUse++;
+            } else {
+                canUse++;
+            }
+        }
+
+        if (canUse > canNotUse) {
+            isWCBusy = true;
+            SendMessage("CONFIRM");
+        }
+
+        votingList.clear();
+    }
+
+    private void ConfirmingUse(Message _sendMessage) throws Exception {
+        _sendMessage.setParameters("msg", "I will use the toilet");
+
+        output.writeObject(_sendMessage);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
+    }
+
+    public Boolean getisWCBusy() {
+        return isWCBusy;
+    }
+
+    public void setWCBusy(Boolean isWCBusy) {
+        this.isWCBusy = isWCBusy;
     }
 }

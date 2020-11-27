@@ -82,6 +82,10 @@ public class Server implements Runnable {
                         askingForWC(received, reply);
                         break;
 
+                    case CONFIRM:
+                        changingWCBusy(received, reply);
+                        break;
+
                     case ENDCON:
                         endConnection(received, reply);
                         talking = false;
@@ -144,12 +148,33 @@ public class Server implements Runnable {
     private void askingForWC(Message _received, Message _reply) {
         try {
             String msg = (String) _received.getParameters("msg");
+            PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");
             msg = App.getRsa().DecryptMessage(msg);
             System.out.println(msg);
 
+            if (!App.getClient().getisWCBusy()) {
+                _reply.setStatus(Status.OK);
+                msg = App.getRsa().EncryptMessage("Ok, You can use the WC now", publicKey);
+                _reply.setParameters("msg", msg);
+            } else {
+                _reply.setStatus(Status.WAIT);
+                msg = App.getRsa().EncryptMessage("Wait a minute", publicKey);
+                _reply.setParameters("msg", msg);
+            }
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void changingWCBusy(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            System.out.println(msg);
+            App.getClient().setWCBusy(true);
+
             _reply.setStatus(Status.OK);
-            _reply.setParameters("msg", "Wait a minute");
-            // TODO logica falha bizantina
+            _reply.setParameters("msg", "The 'isWCBusy' has been changing");
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());
