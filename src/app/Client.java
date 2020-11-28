@@ -143,13 +143,16 @@ public class Client {
 
         Message reply = (Message) input.readObject();
         msg = (String) reply.getParameters("msg");
-        System.out.println(App.getRsa().DecryptMessage(msg));
 
         if (reply.getStatus() == Status.OK) {
-            votingList.add(false);
-        } else if (reply.getStatus() == Status.WAIT) {
-            votingList.add(true);
+            String answer = (String) reply.getParameters("answer");
+
+            msg = App.getRsa().DecryptMessage(msg);
+            answer = App.getRsa().DecryptMessage(answer);
+
+            votingList.add(Boolean.parseBoolean(answer));
         }
+        System.out.println(msg);
     }
 
     private void endConnection() throws Exception {

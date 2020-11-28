@@ -162,15 +162,17 @@ public class Server implements Runnable {
             msg = App.getRsa().DecryptMessage(msg);
             System.out.println(msg);
 
+            _reply.setStatus(Status.OK);
             if (!App.getClient().getisWCBusy()) {
-                _reply.setStatus(Status.OK);
-                msg = App.getRsa().EncryptMessage("Ok, You can use the WC now", publicKey);
-                _reply.setParameters("msg", msg);
+                msg = "Ok, You can use the WC now";
             } else {
-                _reply.setStatus(Status.WAIT);
-                msg = App.getRsa().EncryptMessage("Wait a minute", publicKey);
-                _reply.setParameters("msg", msg);
+                msg = "Wait a minute";
             }
+            msg = App.getRsa().EncryptMessage(msg, publicKey);
+            String answer = App.getRsa().EncryptMessage(App.getClient().getisWCBusy().toString(), publicKey);
+
+            _reply.setParameters("msg", msg);
+            _reply.setParameters("answer", answer);
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());
