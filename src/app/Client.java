@@ -44,7 +44,10 @@ public class Client {
 
                         case ENTRY:
                             if (!isWCBusy) {
-                                IWouldLikeToUseWC(sendMessage);
+                                PublicKey publicKey = askForPublicKeys();
+                                if (publicKey != null) {
+                                    IWouldLikeToUseWC(sendMessage, publicKey);
+                                }
                             } else {
                                 System.out.println("The WC is busy. Wait a minute");
                             }
@@ -65,7 +68,7 @@ public class Client {
                     socket.close();
                 }
             } catch (Exception e) {
-                System.out.println("Error " + address);
+                System.out.println("Error_" + address + ": " + e.getMessage());
             }
             address++;
         }
@@ -73,6 +76,24 @@ public class Client {
         if (operation.equals(Operations.ENTRY)) {
             countingVotes();
         }
+    }
+
+    public PublicKey askForPublicKeys() throws Exception {
+        Message askKeys = new Message(Operations.PUBKEY);
+        askKeys.setParameters("msg", "Can i have your keys?");
+
+        output.writeObject(askKeys);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
+
+        if (reply.getStatus() == Status.OK) {
+            PublicKey publicKey = (PublicKey) reply.getParameters("pubkeys");
+            return publicKey;
+        }
+        return null;
     }
 
     private void IAmAlive(Message _sendMessage) throws Exception {
@@ -100,36 +121,22 @@ public class Client {
         }
     }
 
-    private void IWouldLikeToUseWC(Message _sendMessage) throws Exception {
-        Message askKeys = new Message(Operations.PUBKEY);
-        askKeys.setParameters("msg", "Can i have your keys?");
+    private void IWouldLikeToUseWC(Message _sendMessage, PublicKey _publicKey) throws Exception {
+        String msg = App.getRsa().EncryptMessage("I would like to use the toilet, ok?", _publicKey);
+        _sendMessage.setParameters("msg", msg);
+        _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
-        output.writeObject(askKeys);
+        output.writeObject(_sendMessage);
         output.flush();
 
         Message reply = (Message) input.readObject();
-        String msg = (String) reply.getParameters("msg");
-        System.out.println(msg);
+        msg = (String) reply.getParameters("msg");
+        System.out.println(App.getRsa().DecryptMessage(msg));
 
         if (reply.getStatus() == Status.OK) {
-            PublicKey publicKey = (PublicKey) reply.getParameters("pubkeys");
-
-            msg = App.getRsa().EncryptMessage("I would like to use the toilet, ok?", publicKey);
-            _sendMessage.setParameters("msg", msg);
-            _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
-
-            output.writeObject(_sendMessage);
-            output.flush();
-
-            reply = (Message) input.readObject();
-            msg = (String) reply.getParameters("msg");
-            System.out.println(App.getRsa().DecryptMessage(msg));
-
-            if (reply.getStatus() == Status.OK) {
-                votingList.add(false);
-            } else if (reply.getStatus() == Status.WAIT) {
-                votingList.add(true);
-            }
+            votingList.add(false);
+        } else if (reply.getStatus() == Status.WAIT) {
+            votingList.add(true);
         }
     }
 
