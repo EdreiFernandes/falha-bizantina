@@ -4,7 +4,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
 
 import helper.AddressConfig;
 import helper.Operations;
@@ -18,8 +17,6 @@ public class Server implements Runnable {
     private ObjectInputStream input;
 
     public Server(int _address) {
-        int id = new Random().nextInt(15);
-        UserConfig.getInstance().setUsername("User_" + id);
         turnServerOn(_address);
     }
 

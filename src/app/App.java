@@ -25,9 +25,17 @@ public class App {
         model.addRow(_data);
     }
 
+    public static void writeConsole(String _username, int _userId, String _log) {
+        String consoleLogs = layout.getConsole().getText();
+        consoleLogs += _username + "_" + _userId + ": " + _log + "\n";
+        layout.getConsole().setText(consoleLogs);
+    }
+
     public static void main(String[] args) {
         new Server(AddressConfig.getInstance().getFirstAddress());
         layout = new AppLayout();
+
+        UserConfig.getInstance().setUsername(layout.askForUsername());
 
         Object[] data = { UserConfig.getInstance().getUsername(), UserConfig.getInstance().getStatus(),
                 UserConfig.getInstance().getAddress() };

@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,7 +16,6 @@ import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 public class AppLayout extends JFrame implements ActionListener {
-
     private final int height = 700;
     private final int width = 600;
     private final int border = 10;
@@ -37,10 +37,7 @@ public class AppLayout extends JFrame implements ActionListener {
         JPanel panelConsole = borderedPanel(panelCenter, height / 5, width);
         add(panelCenter, BorderLayout.CENTER);
 
-        JLabel label = new JLabel("Console");
-        console = new JTextPane();
-        panelConsole.add(label, BorderLayout.NORTH);
-        panelConsole.add(console);
+        instantiateConsole(panelConsole);
 
         JPanel panelSouth = new JPanel(new BorderLayout());
         JPanel panelButton = borderedPanel(panelSouth, height / 5, width);
@@ -83,6 +80,15 @@ public class AppLayout extends JFrame implements ActionListener {
         _panel.add(new JScrollPane(waitList), BorderLayout.EAST);
     }
 
+    private void instantiateConsole(JPanel _panel) {
+        JLabel label = new JLabel("Console");
+        console = new JTextPane();
+        console.setEditable(false);
+
+        _panel.add(label, BorderLayout.NORTH);
+        _panel.add(new JScrollPane(console));
+    }
+
     private JPanel borderedPanel(JPanel _panel, int _height, int _width) {
         _panel.setPreferredSize(new Dimension(_width, _height));
 
@@ -118,6 +124,18 @@ public class AppLayout extends JFrame implements ActionListener {
 
     public JTable getUsersTable() {
         return usersTable;
+    }
+
+    public JTextPane getConsole() {
+        return console;
+    }
+
+    public String askForUsername() {
+        String username = null;
+        while (username == null || username.isEmpty()) {
+            username = JOptionPane.showInputDialog("Enter your username: ");
+        }
+        return username;
     }
 
     @Override
