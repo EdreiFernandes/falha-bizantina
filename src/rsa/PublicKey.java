@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class PublicKey implements Serializable {
+    private static final long serialVersionUID = -7770655662217362247L;
+
     private BigInteger n;
     private BigInteger e;
     private BigInteger tot;

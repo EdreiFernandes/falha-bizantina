@@ -16,6 +16,8 @@ import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 public class AppLayout extends JFrame implements ActionListener {
+    private static final long serialVersionUID = 4937922016334810986L;
+
     private final int height = 700;
     private final int width = 600;
     private final int border = 10;
@@ -54,6 +56,8 @@ public class AppLayout extends JFrame implements ActionListener {
         String[] columnsNames = { "User", "Status", "Address" };
 
         DefaultTableModel tableData = new DefaultTableModel(null, columnsNames) {
+            private static final long serialVersionUID = 4573641225227385105L;
+
             @Override
             public boolean isCellEditable(int row, int col) {
                 return false;

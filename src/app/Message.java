@@ -8,6 +8,8 @@ import helper.Operations;
 import helper.Status;
 
 public class Message implements Serializable {
+    private static final long serialVersionUID = 7339410193238984158L;
+
     private Operations operation;
     private Status status;
     private Map<String, Object> parameters;
