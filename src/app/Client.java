@@ -35,37 +35,37 @@ public class Client {
                     output = new ObjectOutputStream(socket.getOutputStream());
                     input = new ObjectInputStream(socket.getInputStream());
 
-                    Message sendMessage = new Message(operation);
+                    PublicKey publicKey = askForPublicKeys();
+                    if (publicKey != null) {
+                        Message sendMessage = new Message(operation);
 
-                    switch (operation) {
-                        case ALIVE:
-                            IAmAlive(sendMessage);
-                            break;
+                        switch (operation) {
+                            case ALIVE:
+                                IAmAlive(sendMessage, publicKey);
+                                break;
 
-                        case ENTRY:
-                            if (!isWCBusy) {
-                                PublicKey publicKey = askForPublicKeys();
-                                if (publicKey != null) {
+                            case ENTRY:
+                                if (!isWCBusy) {
                                     IWouldLikeToUseWC(sendMessage, publicKey);
+                                } else {
+                                    App.writeConsole("System", address, "The WC is busy. Wait a minute");
                                 }
-                            } else {
-                                System.out.println("The WC is busy. Wait a minute");
-                            }
-                            break;
+                                break;
 
-                        case CONFIRM:
-                            ConfirmingUse(sendMessage);
-                            break;
+                            case CONFIRM:
+                                ConfirmingUse(sendMessage);
+                                break;
 
-                        default:
-                            System.out.println(_operationString + " doesn't exist in the current context!");
-                            break;
+                            default:
+                                System.out.println(_operationString + " doesn't exist in the current context!");
+                                break;
+                        }
+
+                        endConnection();
+                        input.close();
+                        output.close();
+                        socket.close();
                     }
-
-                    endConnection();
-                    input.close();
-                    output.close();
-                    socket.close();
                 }
             } catch (Exception e) {
                 System.out.println("Error_" + address + ": " + e.getMessage());
@@ -90,35 +90,47 @@ public class Client {
         System.out.println(msg);
 
         if (reply.getStatus() == Status.OK) {
-            PublicKey publicKey = (PublicKey) reply.getParameters("pubkeys");
+            PublicKey publicKey = (PublicKey) reply.getParameters("pubkey");
             return publicKey;
         }
         return null;
     }
 
-    private void IAmAlive(Message _sendMessage) throws Exception {
-        _sendMessage.setParameters("msg", "I am alive");
-        _sendMessage.setParameters("address", UserConfig.getInstance().getAddress());
-        _sendMessage.setParameters("username", UserConfig.getInstance().getUsername());
-        _sendMessage.setParameters("status", UserConfig.getInstance().getStatus());
+    private void IAmAlive(Message _sendMessage, PublicKey _publicKey) throws Exception {
+        String msg = App.getRsa().EncryptMessage("I am alive", _publicKey);
+        String address = App.getRsa().EncryptMessage(Integer.toString(UserConfig.getInstance().getAddress()),
+                _publicKey);
+        String username = App.getRsa().EncryptMessage(UserConfig.getInstance().getUsername(), _publicKey);
+        String status = App.getRsa().EncryptMessage(UserConfig.getInstance().getStatus().toString(), _publicKey);
+
+        _sendMessage.setParameters("msg", msg);
+        _sendMessage.setParameters("address", address);
+        _sendMessage.setParameters("username", username);
+        _sendMessage.setParameters("status", status);
+        _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
         output.writeObject(_sendMessage);
         output.flush();
 
         Message reply = (Message) input.readObject();
-        String msg = (String) reply.getParameters("msg");
+        msg = (String) reply.getParameters("msg");
 
         if (reply.getStatus() == Status.OK) {
-            int address = (int) reply.getParameters("address");
-            String username = (String) reply.getParameters("username");
-            Status status = (Status) reply.getParameters("status");
+            address = (String) reply.getParameters("address");
+            username = (String) reply.getParameters("username");
+            status = (String) reply.getParameters("status");
+
+            msg = App.getRsa().DecryptMessage(msg);
+            address = App.getRsa().DecryptMessage(address);
+            username = App.getRsa().DecryptMessage(username);
+            status = App.getRsa().DecryptMessage(status);
 
             Object[] data = { username, status, address };
             App.updateUsersTable(data);
-            System.out.println("Op: " + reply.getOperation() + " - " + address + " says: " + msg);
-        } else {
-            System.out.println("Op: " + reply.getOperation() + " says: " + msg);
+            App.writeConsole(username, Integer.valueOf(address), status);
         }
+
+        System.out.println(msg);
     }
 
     private void IWouldLikeToUseWC(Message _sendMessage, PublicKey _publicKey) throws Exception {

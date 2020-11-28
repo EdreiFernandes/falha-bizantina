@@ -24,7 +24,7 @@ public class Server implements Runnable {
     public void run() {
         try {
             serverSocket = new ServerSocket(UserConfig.getInstance().getAddress());
-            System.out.println("Waiting conections");
+            System.out.println("Running server");
 
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -50,7 +50,7 @@ public class Server implements Runnable {
         } else {
             UserConfig.getInstance().setAddress(0);
             UserConfig.getInstance().setStatus(Status.OUT_OF_DOMAIN);
-            System.out.println("Address outside the application domain");
+            App.writeConsole("System", 0, "Address outside the application domain");
         }
     }
 
@@ -105,28 +105,6 @@ public class Server implements Runnable {
         }
     }
 
-    private void someoneAlive(Message _received, Message _reply) {
-        try {
-            String msg = (String) _received.getParameters("msg");
-            int address = (int) _received.getParameters("address");
-            String username = (String) _received.getParameters("username");
-            Status status = (Status) _received.getParameters("status");
-
-            Object[] data = { username, status, address };
-            App.updateUsersTable(data);
-            System.out.println(address + " says: " + msg);
-
-            _reply.setStatus(Status.OK);
-            _reply.setParameters("msg", "Ok, i heard you");
-            _reply.setParameters("address", UserConfig.getInstance().getAddress());
-            _reply.setParameters("username", UserConfig.getInstance().getUsername());
-            _reply.setParameters("status", UserConfig.getInstance().getStatus());
-        } catch (Exception e) {
-            _reply.setStatus(Status.ERROR);
-            _reply.setParameters("msg", e.getMessage());
-        }
-    }
-
     private void askingForKeys(Message _received, Message _reply) {
         try {
             String msg = (String) _received.getParameters("msg");
@@ -135,7 +113,42 @@ public class Server implements Runnable {
             _reply.setStatus(Status.OK);
             _reply.setParameters("msg", "Sure, take my keys!");
             PublicKey publicKey = App.getRsa().GetPublicKey();
-            _reply.setParameters("pubkeys", publicKey);
+            _reply.setParameters("pubkey", publicKey);
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void someoneAlive(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            String address = (String) _received.getParameters("address");
+            String username = (String) _received.getParameters("username");
+            String status = (String) _received.getParameters("status");
+
+            msg = App.getRsa().DecryptMessage(msg);
+            address = App.getRsa().DecryptMessage(address);
+            username = App.getRsa().DecryptMessage(username);
+            status = App.getRsa().DecryptMessage(status);
+
+            System.out.println(msg);
+
+            Object[] data = { username, status, address };
+            App.updateUsersTable(data);
+            App.writeConsole(username, Integer.valueOf(address), status);
+
+            PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");
+            msg = App.getRsa().EncryptMessage("Ok, i heard you", publicKey);
+            address = App.getRsa().EncryptMessage(Integer.toString(UserConfig.getInstance().getAddress()), publicKey);
+            username = App.getRsa().EncryptMessage(UserConfig.getInstance().getUsername(), publicKey);
+            status = App.getRsa().EncryptMessage(UserConfig.getInstance().getStatus().toString(), publicKey);
+
+            _reply.setStatus(Status.OK);
+            _reply.setParameters("msg", msg);
+            _reply.setParameters("address", address);
+            _reply.setParameters("username", username);
+            _reply.setParameters("status", status);
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());
