@@ -53,7 +53,7 @@ public class Client {
                                 break;
 
                             case CONFIRM:
-                                ConfirmingUse(sendMessage);
+                                confirmingUse(sendMessage);
                                 break;
 
                             default:
@@ -180,13 +180,14 @@ public class Client {
 
         if (canUse > canNotUse) {
             isWCBusy = true;
+            App.usingTheWC();
             SendMessage("CONFIRM");
         }
 
         votingList.clear();
     }
 
-    private void ConfirmingUse(Message _sendMessage) throws Exception {
+    private void confirmingUse(Message _sendMessage) throws Exception {
         _sendMessage.setParameters("msg", "I will use the toilet");
 
         output.writeObject(_sendMessage);

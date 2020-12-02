@@ -31,6 +31,31 @@ public class App {
         layout.getConsole().setText(consoleLogs);
     }
 
+    public static void usingTheWC() {
+        UserConfig.getInstance().setImIntheWC(true);
+
+        Thread countThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    int timer = 30; // seconds
+
+                    while (timer > 0) {
+                        timer--;
+                        Thread.sleep(1000);
+                    }
+                    UserConfig.getInstance().setImIntheWC(false);
+
+                    writeConsole("System", 0, "Leaving the WC");
+                    App.getClient().SendMessage("EXIT");
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+        };
+        countThread.start();
+    }
+
     public static void main(String[] args) {
         new Server(AddressConfig.getInstance().getFirstAddress());
         layout = new AppLayout();

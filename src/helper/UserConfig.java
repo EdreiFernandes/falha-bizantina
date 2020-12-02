@@ -4,10 +4,12 @@ public class UserConfig {
     private String username;
     private int address;
     private Status status;
+    private Boolean ImIntheWC;
 
     private static UserConfig instance;
 
     private UserConfig() {
+        ImIntheWC = false;
     }
 
     public static synchronized UserConfig getInstance() {
@@ -39,5 +41,13 @@ public class UserConfig {
 
     public Status getStatus() {
         return status;
+    }
+
+    public void setImIntheWC(Boolean imIntheWC) {
+        ImIntheWC = imIntheWC;
+    }
+
+    public Boolean getImIntheWC() {
+        return ImIntheWC;
     }
 }
