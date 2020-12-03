@@ -186,11 +186,15 @@ public class Server implements Runnable {
     private void changingWCBusy(Message _received, Message _reply) {
         try {
             String msg = (String) _received.getParameters("msg");
+            msg = App.getRsa().DecryptMessage(msg);
             System.out.println(msg);
+            
             App.getClient().setWCBusy(true);
 
             _reply.setStatus(Status.OK);
-            _reply.setParameters("msg", "The 'isWCBusy' has been changing");
+            PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");
+            msg = App.getRsa().EncryptMessage("The 'isWCBusy' has been changing", publicKey);
+            _reply.setParameters("msg", msg);
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());

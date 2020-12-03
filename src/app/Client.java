@@ -53,7 +53,7 @@ public class Client {
                                 break;
 
                             case CONFIRM:
-                                confirmingUse(sendMessage);
+                                confirmingUse(sendMessage, publicKey);
                                 break;
 
                             case EXIT:
@@ -191,15 +191,19 @@ public class Client {
         votingList.clear();
     }
 
-    private void confirmingUse(Message _sendMessage) throws Exception {
-        // TODO criptografar
-        _sendMessage.setParameters("msg", "I will use the toilet");
+    private void confirmingUse(Message _sendMessage, PublicKey _publicKey) throws Exception {
+    	String msg = App.getRsa().EncryptMessage("I will use the toilet", _publicKey);
+        _sendMessage.setParameters("msg", msg);
+    	_sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
         output.writeObject(_sendMessage);
         output.flush();
-
+        
         Message reply = (Message) input.readObject();
-        String msg = (String) reply.getParameters("msg");
+        msg = (String) reply.getParameters("msg");
+        if (reply.getStatus() == Status.OK) {
+            msg = App.getRsa().DecryptMessage(msg);
+        }
         System.out.println(msg);
     }
 
