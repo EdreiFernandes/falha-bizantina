@@ -46,7 +46,7 @@ public class App {
                     }
                     UserConfig.getInstance().setImIntheWC(false);
 
-                    writeConsole("System", 0, "Leaving the WC");
+                    writeConsole("System", 0, "Leaving the toilet");
                     App.getClient().SendMessage("EXIT");
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());

@@ -56,6 +56,10 @@ public class Client {
                                 confirmingUse(sendMessage);
                                 break;
 
+                            case EXIT:
+                                notifyIAmExiting(sendMessage, publicKey);
+                                break;
+
                             default:
                                 System.out.println(_operationString + " doesn't exist in the current context!");
                                 break;
@@ -188,6 +192,7 @@ public class Client {
     }
 
     private void confirmingUse(Message _sendMessage) throws Exception {
+        // TODO criptografar
         _sendMessage.setParameters("msg", "I will use the toilet");
 
         output.writeObject(_sendMessage);
@@ -195,6 +200,23 @@ public class Client {
 
         Message reply = (Message) input.readObject();
         String msg = (String) reply.getParameters("msg");
+        System.out.println(msg);
+    }
+
+    private void notifyIAmExiting(Message _sendMessage, PublicKey _publicKey) throws Exception {
+        String msg = App.getRsa().EncryptMessage("I am already out of the toilet", _publicKey);
+        _sendMessage.setParameters("msg", msg);
+        _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
+
+        output.writeObject(_sendMessage);
+        output.flush();
+
+        Message reply = (Message) input.readObject();
+        msg = (String) reply.getParameters("msg");
+        if (reply.getStatus() == Status.OK) {
+            isWCBusy = false;
+            msg = App.getRsa().DecryptMessage(msg);
+        }
         System.out.println(msg);
     }
 

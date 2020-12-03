@@ -83,6 +83,10 @@ public class Server implements Runnable {
                         changingWCBusy(received, reply);
                         break;
 
+                    case EXIT:
+                        someoneExitingWC(received, reply);
+                        break;
+
                     case ENDCON:
                         endConnection(received, reply);
                         talking = false;
@@ -200,6 +204,24 @@ public class Server implements Runnable {
 
             _reply.setStatus(Status.OK);
             _reply.setParameters("msg", "See you");
+        } catch (Exception e) {
+            _reply.setStatus(Status.ERROR);
+            _reply.setParameters("msg", e.getMessage());
+        }
+    }
+
+    private void someoneExitingWC(Message _received, Message _reply) {
+        try {
+            String msg = (String) _received.getParameters("msg");
+            msg = App.getRsa().DecryptMessage(msg);
+            System.out.println(msg);
+
+            App.getClient().setWCBusy(false);
+
+            _reply.setStatus(Status.OK);
+            PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");
+            msg = App.getRsa().EncryptMessage("All rigth, The toilet is no longer busy", publicKey);
+            _reply.setParameters("msg", msg);
         } catch (Exception e) {
             _reply.setStatus(Status.ERROR);
             _reply.setParameters("msg", e.getMessage());
