@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -119,6 +120,8 @@ public class AppLayout extends JFrame implements ActionListener {
     }
 
     private void instantiateFrame() {
+        ImageIcon icon = new ImageIcon("./image/icon.png");
+        setIconImage(icon.getImage());
         setTitle("Fila App");
         setSize(height, width);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
