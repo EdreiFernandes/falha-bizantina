@@ -186,10 +186,16 @@ public class Server implements Runnable {
     private void changingWCBusy(Message _received, Message _reply) {
         try {
             String msg = (String) _received.getParameters("msg");
+            String username = (String) _received.getParameters("username");
+            String address = (String) _received.getParameters("address");
+
             msg = App.getRsa().DecryptMessage(msg);
+            username = App.getRsa().DecryptMessage(username);
+            address = App.getRsa().DecryptMessage(address);
             System.out.println(msg);
-            
+
             App.getClient().setWCBusy(true);
+            App.writeConsole(username, Integer.valueOf(address), msg);
 
             _reply.setStatus(Status.OK);
             PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");
@@ -217,10 +223,16 @@ public class Server implements Runnable {
     private void someoneExitingWC(Message _received, Message _reply) {
         try {
             String msg = (String) _received.getParameters("msg");
+            String username = (String) _received.getParameters("username");
+            String address = (String) _received.getParameters("address");
+
             msg = App.getRsa().DecryptMessage(msg);
+            username = App.getRsa().DecryptMessage(username);
+            address = App.getRsa().DecryptMessage(address);
             System.out.println(msg);
 
             App.getClient().setWCBusy(false);
+            App.writeConsole(username, Integer.valueOf(address), msg);
 
             _reply.setStatus(Status.OK);
             PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");

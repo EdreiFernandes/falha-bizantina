@@ -31,9 +31,15 @@ public class App {
         layout.getConsole().setText(consoleLogs);
     }
 
+    public static void writeConsole(String _log) {
+        String consoleLogs = layout.getConsole().getText();
+        consoleLogs += "System: " + _log + "\n";
+        layout.getConsole().setText(consoleLogs);
+    }
+
     public static void usingTheWC() {
         UserConfig.getInstance().setImIntheWC(true);
-
+        App.writeConsole("You are entering the toilet");
         Thread countThread = new Thread() {
             @Override
             public void run() {
@@ -46,7 +52,7 @@ public class App {
                     }
                     UserConfig.getInstance().setImIntheWC(false);
 
-                    writeConsole("System", 0, "Leaving the toilet");
+                    writeConsole("You are leaving the toilet");
                     App.getClient().SendMessage("EXIT");
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
@@ -67,6 +73,8 @@ public class App {
         updateUsersTable(data);
 
         if (UserConfig.getInstance().getStatus() != Status.OUT_OF_DOMAIN) {
+            writeConsole("You are connected");
+
             rsa = new RSAManager();
             client = new Client();
 

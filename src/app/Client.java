@@ -27,8 +27,9 @@ public class Client {
     public void SendMessage(String _operationString) {
         int address = AddressConfig.getInstance().getFirstAddress();
         Operations operation = Operations.valueOf(_operationString);
+        boolean repeat = true;
 
-        while (AddressConfig.isInDomainRange(address)) {
+        while (AddressConfig.isInDomainRange(address) && repeat) {
             try {
                 if (UserConfig.getInstance().getAddress() != address) {
                     socket = new Socket("localhost", address);
@@ -48,7 +49,8 @@ public class Client {
                                 if (!isWCBusy) {
                                     IWouldLikeToUseWC(sendMessage, publicKey);
                                 } else {
-                                    App.writeConsole("System", address, "The WC is busy. Wait a minute");
+                                    repeat = false;
+                                    App.writeConsole("The toilet is busy. Wait a minute");
                                 }
                                 break;
 
@@ -131,7 +133,7 @@ public class Client {
 
             Object[] data = { username, status, address };
             App.updateUsersTable(data);
-            App.writeConsole(username, Integer.valueOf(address), status);
+            App.writeConsole(username, Integer.valueOf(address), "Is " + status);
         }
 
         System.out.println(msg);
@@ -192,13 +194,19 @@ public class Client {
     }
 
     private void confirmingUse(Message _sendMessage, PublicKey _publicKey) throws Exception {
-    	String msg = App.getRsa().EncryptMessage("I will use the toilet", _publicKey);
+        String msg = App.getRsa().EncryptMessage("I will use the toilet", _publicKey);
+        String username = App.getRsa().EncryptMessage(UserConfig.getInstance().getUsername(), _publicKey);
+        String address = App.getRsa().EncryptMessage(Integer.toString(UserConfig.getInstance().getAddress()),
+                _publicKey);
+
         _sendMessage.setParameters("msg", msg);
-    	_sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
+        _sendMessage.setParameters("username", username);
+        _sendMessage.setParameters("address", address);
+        _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
         output.writeObject(_sendMessage);
         output.flush();
-        
+
         Message reply = (Message) input.readObject();
         msg = (String) reply.getParameters("msg");
         if (reply.getStatus() == Status.OK) {
@@ -209,7 +217,13 @@ public class Client {
 
     private void notifyIAmExiting(Message _sendMessage, PublicKey _publicKey) throws Exception {
         String msg = App.getRsa().EncryptMessage("I am already out of the toilet", _publicKey);
+        String username = App.getRsa().EncryptMessage(UserConfig.getInstance().getUsername(), _publicKey);
+        String address = App.getRsa().EncryptMessage(Integer.toString(UserConfig.getInstance().getAddress()),
+                _publicKey);
+
         _sendMessage.setParameters("msg", msg);
+        _sendMessage.setParameters("username", username);
+        _sendMessage.setParameters("address", address);
         _sendMessage.setParameters("pubkey", App.getRsa().GetPublicKey());
 
         output.writeObject(_sendMessage);
