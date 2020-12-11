@@ -55,7 +55,7 @@ public class AppLayout extends JFrame implements ActionListener {
         JPanel panelButton = borderedPanel(panelSouth, height / 5, width);
         add(panelSouth, BorderLayout.SOUTH);
 
-        button = new JButton("Enter/Leave the bathroom");
+        button = new JButton("Enter the bathroom");
         button.addActionListener(this);
         panelButton.add(button);
 
@@ -106,6 +106,7 @@ public class AppLayout extends JFrame implements ActionListener {
 
     private void instantiateConsole(JPanel _panel) {
         JLabel label = new JLabel("Console");
+        label.setFont(font);
         console = new JTextPane();
         console.setEditable(false);
 
