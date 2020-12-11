@@ -12,7 +12,11 @@ Projeto de Sistemas distribuídos com o objetivo de utilizar sockets para efetua
 
 ### Compiling
 
-- javac -d ./bin src/helper/\*.java
+- javac -d ./bin src/config/\*.java
+
+- javac -cp ./bin src/helper/\*.java
+
+- move .class from 'src/helper' to 'bin/helper'
 
 - javac -d ./bin src/rsa/\*.java
 

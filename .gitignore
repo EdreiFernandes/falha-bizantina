@@ -2,7 +2,7 @@
 *.class
 
 # Manifest
-manifest.txt
+bin/
 
 # Log file
 *.log
