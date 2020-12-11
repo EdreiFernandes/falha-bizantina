@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 public class AppLayout extends JFrame implements ActionListener {
@@ -89,14 +90,17 @@ public class AppLayout extends JFrame implements ActionListener {
 
         timer = new JLabel("0");
         timer.setFont(new Font("Arial", Font.BOLD, 40));
+        timer.setHorizontalAlignment(SwingConstants.CENTER);
         timerPanel.add(timer, BorderLayout.CENTER);
 
         wcStatus = new JLabel("Free");
         wcStatus.setFont(font);
+        wcStatus.setHorizontalAlignment(SwingConstants.CENTER);
         timerPanel.add(wcStatus, BorderLayout.NORTH);
 
         JLabel timerType = new JLabel("seconds");
         timerType.setFont(font);
+        timerType.setHorizontalAlignment(SwingConstants.CENTER);
         timerPanel.add(timerType, BorderLayout.SOUTH);
 
         _panel.add(new JScrollPane(timerPanel), BorderLayout.EAST);
