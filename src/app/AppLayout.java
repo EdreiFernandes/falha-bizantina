@@ -30,7 +30,6 @@ public class AppLayout extends JFrame implements ActionListener {
     private JLabel timer;
     private JLabel wcStatus;
     private JPanel timerPanel;
-    private JTable waitList;
     private JTextPane console;
     private JButton button;
 
@@ -45,7 +44,6 @@ public class AppLayout extends JFrame implements ActionListener {
 
         instantiateUsersTable(panelInfo);
         instantiateTimer(panelInfo);
-        // instantiateWaitList(panelInfo);
 
         JPanel panelCenter = new JPanel(new BorderLayout());
         JPanel panelConsole = borderedPanel(panelCenter, height / 5, width);
@@ -104,18 +102,6 @@ public class AppLayout extends JFrame implements ActionListener {
         timerPanel.add(timerType, BorderLayout.SOUTH);
 
         _panel.add(new JScrollPane(timerPanel), BorderLayout.EAST);
-    }
-
-    private void instantiateWaitList(JPanel _panel) {
-        String[] columnsNames = { "Wait list" };
-
-        Object[][] data = { { "item 1" }, { "item 2" }, { "item 3" }, { "item 4" } };
-
-        waitList = new JTable(data, columnsNames);
-        waitList.setPreferredScrollableViewportSize(new Dimension(100, 50));
-        waitList.setFillsViewportHeight(true);
-
-        _panel.add(new JScrollPane(waitList), BorderLayout.EAST);
     }
 
     private void instantiateConsole(JPanel _panel) {
