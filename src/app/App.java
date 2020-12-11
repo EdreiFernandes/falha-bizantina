@@ -38,22 +38,25 @@ public class App {
     }
 
     public static void usingTheWC() {
-        UserConfig.getInstance().setImIntheWC(true);
-        App.writeConsole("You are entering the toilet");
         Thread countThread = new Thread() {
             @Override
             public void run() {
                 try {
                     int timer = 30; // seconds
+                    layout.toggleTimer(true);
 
                     while (timer > 0) {
-                        timer--;
                         Thread.sleep(1000);
+                        layout.getTimer().setText(Integer.toString(timer));
+                        timer--;
                     }
-                    UserConfig.getInstance().setImIntheWC(false);
+                    layout.toggleTimer(false);
 
-                    writeConsole("You are leaving the toilet");
-                    App.getClient().SendMessage("EXIT");
+                    if (UserConfig.getInstance().getImIntheWC()) {
+                        UserConfig.getInstance().setImIntheWC(false);
+                        writeConsole("You are leaving the toilet");
+                        App.getClient().SendMessage("EXIT");
+                    }
                 } catch (Exception e) {
                     System.out.println("Error: " + e.getMessage());
                 }

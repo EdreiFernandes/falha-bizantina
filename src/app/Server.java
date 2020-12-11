@@ -196,6 +196,7 @@ public class Server implements Runnable {
 
             App.getClient().setWCBusy(true);
             App.writeConsole(username, Integer.valueOf(address), msg);
+            App.usingTheWC();
 
             _reply.setStatus(Status.OK);
             PublicKey publicKey = (PublicKey) _received.getParameters("pubkey");

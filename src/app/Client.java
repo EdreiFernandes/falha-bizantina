@@ -186,6 +186,8 @@ public class Client {
 
         if (canUse > canNotUse) {
             isWCBusy = true;
+            UserConfig.getInstance().setImIntheWC(true);
+            App.writeConsole("You are entering the toilet");
             App.usingTheWC();
             SendMessage("CONFIRM");
         }

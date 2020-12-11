@@ -3,6 +3,8 @@ package app;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
@@ -24,17 +26,25 @@ public class AppLayout extends JFrame implements ActionListener {
     private final int border = 10;
 
     private JTable usersTable;
+    private JLabel timer;
+    private JLabel wcStatus;
+    private JPanel timerPanel;
     private JTable waitList;
     private JTextPane console;
     private JButton button;
 
+    private Font font;
+
     public AppLayout() {
+        font = new Font("Arial", Font.CENTER_BASELINE, 15);
+
         JPanel panelNorth = new JPanel(new BorderLayout());
         JPanel panelInfo = borderedPanel(panelNorth, height / 5, width);
         add(panelNorth, BorderLayout.NORTH);
 
         instantiateUsersTable(panelInfo);
-        instantiateWaitList(panelInfo);
+        instantiateTimer(panelInfo);
+        // instantiateWaitList(panelInfo);
 
         JPanel panelCenter = new JPanel(new BorderLayout());
         JPanel panelConsole = borderedPanel(panelCenter, height / 5, width);
@@ -72,10 +82,29 @@ public class AppLayout extends JFrame implements ActionListener {
         _panel.add(new JScrollPane(usersTable), BorderLayout.WEST);
     }
 
+    private void instantiateTimer(JPanel _panel) {
+        timerPanel = new JPanel(new BorderLayout());
+        timerPanel.setBackground(Color.GREEN);
+        timerPanel.setPreferredSize(new Dimension(100, 100));
+
+        timer = new JLabel("0");
+        timer.setFont(new Font("Arial", Font.BOLD, 40));
+        timerPanel.add(timer, BorderLayout.CENTER);
+
+        wcStatus = new JLabel("Free");
+        wcStatus.setFont(font);
+        timerPanel.add(wcStatus, BorderLayout.NORTH);
+
+        JLabel timerType = new JLabel("seconds");
+        timerType.setFont(font);
+        timerPanel.add(timerType, BorderLayout.SOUTH);
+
+        _panel.add(new JScrollPane(timerPanel), BorderLayout.EAST);
+    }
+
     private void instantiateWaitList(JPanel _panel) {
         String[] columnsNames = { "Wait list" };
 
-        // TODO popular com dados reais (Wait list)
         Object[][] data = { { "item 1" }, { "item 2" }, { "item 3" }, { "item 4" } };
 
         waitList = new JTable(data, columnsNames);
@@ -135,6 +164,21 @@ public class AppLayout extends JFrame implements ActionListener {
 
     public JTextPane getConsole() {
         return console;
+    }
+
+    public JLabel getTimer() {
+        return timer;
+    }
+
+    public void toggleTimer(boolean isBusy) {
+        if (isBusy) {
+            wcStatus.setText("Busy");
+            timerPanel.setBackground(Color.RED);
+        } else {
+            timer.setText("0");
+            wcStatus.setText("Free");
+            timerPanel.setBackground(Color.GREEN);
+        }
     }
 
     public String askForUsername() {
