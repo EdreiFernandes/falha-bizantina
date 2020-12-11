@@ -2,7 +2,6 @@ package app;
 
 import javax.swing.table.DefaultTableModel;
 
-import helper.AddressConfig;
 import helper.Status;
 import helper.UserConfig;
 import rsa.RSAManager;
@@ -66,9 +65,8 @@ public class App {
     }
 
     public static void main(String[] args) {
-        new Server(AddressConfig.getInstance().getFirstAddress());
         layout = new AppLayout();
-
+        new Server(UserConfig.getInstance().getAddress());
         UserConfig.getInstance().setUsername(layout.askForUsername());
 
         Object[] data = { UserConfig.getInstance().getUsername(), UserConfig.getInstance().getStatus(),

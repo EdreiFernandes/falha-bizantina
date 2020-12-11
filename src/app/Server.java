@@ -50,7 +50,7 @@ public class Server implements Runnable {
         } else {
             UserConfig.getInstance().setAddress(0);
             UserConfig.getInstance().setStatus(Status.OUT_OF_DOMAIN);
-            App.writeConsole("System", 0, "Address outside the application domain");
+            App.writeConsole("Address outside the application domain");
         }
     }
 

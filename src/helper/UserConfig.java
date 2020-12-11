@@ -1,5 +1,7 @@
 package helper;
 
+import config.configReader;
+
 public class UserConfig {
     private String username;
     private int address;
@@ -10,6 +12,7 @@ public class UserConfig {
 
     private UserConfig() {
         ImIntheWC = false;
+        address = Integer.valueOf(configReader.getParam("address"));
     }
 
     public static synchronized UserConfig getInstance() {

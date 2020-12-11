@@ -1,12 +1,16 @@
 package helper;
 
+import config.configReader;
+
 public class AddressConfig {
-    private int firstAddress = 4240;
-    private int lastAddress = 4244;
+    private int firstAddress;
+    private int lastAddress;
 
     private static AddressConfig instance;
 
     private AddressConfig() {
+        firstAddress = Integer.valueOf(configReader.getParam("firstAddress"));
+        lastAddress = Integer.valueOf(configReader.getParam("lastAddress"));
     }
 
     public static synchronized AddressConfig getInstance() {
